@@ -1,0 +1,16 @@
+# Local development database only. Production uses managed Postgres
+# (Supabase / Neon / Render) per FSD §3.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tripapp
+      POSTGRES_PASSWORD: tripapp
+      POSTGRES_DB: tripapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - tripapp-pgdata:/var/lib/postgresql/data
+
+volumes:
+  tripapp-pgdata:

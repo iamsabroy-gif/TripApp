@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-stone-50 text-stone-900 antialiased;
+}
+
+/* Numbered Leaflet day markers (divIcon) */
+.day-marker {
+  @apply flex items-center justify-center rounded-full bg-forest-600 text-white font-bold text-sm border-2 border-white shadow-md;
+  width: 30px !important;
+  height: 30px !important;
+}
+.day-marker--active {
+  @apply bg-amber-500;
+}
