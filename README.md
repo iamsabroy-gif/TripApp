@@ -39,6 +39,10 @@ npm run dev             # http://localhost:3000  (admin at /admin)
 
 `npm test` runs the unit tests; `npm run build` produces the production build.
 
+With the app running, `E2E_ADMIN_PASSWORD=<password> node scripts/e2e-admin-console.mjs`
+drives the admin console in a real browser (login → create trip → add
+itinerary day + site → publish → verify on the public API → draft save).
+
 ## Project layout
 
 ```
