@@ -1,0 +1,499 @@
+<title>TripApp — Mobile Preview</title>
+<style>
+  :root {
+    --ground: #fafaf9;
+    --card: #ffffff;
+    --ink: #1c1917;
+    --ink-soft: #57534e;
+    --ink-faint: #a8a29e;
+    --line: #e7e5e4;
+    --forest: #346842;
+    --forest-deep: #2a5336;
+    --forest-tint: #eaf2ec;
+    --amber: #b45309;
+    --amber-tint: #fef3c7;
+    --rose: #be123c;
+    --rose-tint: #ffe4e6;
+    --emerald: #047857;
+    --emerald-tint: #d1fae5;
+    --map-sky: #f1f5ee;
+    --map-contour: #d5e0d2;
+    --shadow: 0 1px 3px rgba(28, 25, 23, .08), 0 4px 14px rgba(28, 25, 23, .05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #151b17;
+      --card: #1d2620;
+      --ink: #e9e6e1;
+      --ink-soft: #a9b3aa;
+      --ink-faint: #6b7a6e;
+      --line: #2c3830;
+      --forest: #6fae83;
+      --forest-deep: #8cc49d;
+      --forest-tint: #24352a;
+      --amber: #e8a34a;
+      --amber-tint: #3a2e18;
+      --rose: #f27d94;
+      --rose-tint: #3c2228;
+      --emerald: #5cc79a;
+      --emerald-tint: #1b342a;
+      --map-sky: #1a231d;
+      --map-contour: #2c3b30;
+      --shadow: 0 1px 3px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #fafaf9; --card: #ffffff; --ink: #1c1917; --ink-soft: #57534e;
+    --ink-faint: #a8a29e; --line: #e7e5e4; --forest: #346842; --forest-deep: #2a5336;
+    --forest-tint: #eaf2ec; --amber: #b45309; --amber-tint: #fef3c7;
+    --rose: #be123c; --rose-tint: #ffe4e6; --emerald: #047857; --emerald-tint: #d1fae5;
+    --map-sky: #f1f5ee; --map-contour: #d5e0d2;
+    --shadow: 0 1px 3px rgba(28,25,23,.08), 0 4px 14px rgba(28,25,23,.05);
+  }
+  :root[data-theme="dark"] {
+    --ground: #151b17; --card: #1d2620; --ink: #e9e6e1; --ink-soft: #a9b3aa;
+    --ink-faint: #6b7a6e; --line: #2c3830; --forest: #6fae83; --forest-deep: #8cc49d;
+    --forest-tint: #24352a; --amber: #e8a34a; --amber-tint: #3a2e18;
+    --rose: #f27d94; --rose-tint: #3c2228; --emerald: #5cc79a; --emerald-tint: #1b342a;
+    --map-sky: #1a231d; --map-contour: #2c3b30;
+    --shadow: 0 1px 3px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.3);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px 64px; }
+
+  /* ---------- header ---------- */
+  header.app {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .app-bar {
+    max-width: 640px; margin: 0 auto; padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px; color: var(--forest-deep); text-decoration: none; }
+  .brand svg { display: block; }
+  .tabs { display: flex; gap: 4px; }
+  .tab {
+    border: 0; background: transparent; color: var(--ink-soft);
+    font: inherit; font-size: 13px; font-weight: 600;
+    padding: 6px 12px; border-radius: 999px; cursor: pointer;
+  }
+  .tab[aria-selected="true"] { background: var(--forest); color: #fff; }
+  :root[data-theme="dark"] .tab[aria-selected="true"], .dark-tab-fix { color: #10201a; }
+
+  .preview-note {
+    margin: 16px 0 0; padding: 10px 14px;
+    background: var(--forest-tint); border: 1px solid color-mix(in srgb, var(--forest) 30%, transparent);
+    border-radius: 10px; font-size: 13px; color: var(--ink-soft);
+  }
+  .preview-note strong { color: var(--ink); }
+
+  /* ---------- listing ---------- */
+  .screen { display: none; }
+  .screen.active { display: block; }
+  h1 { font-size: 26px; letter-spacing: -.01em; margin: 24px 0 4px; text-wrap: balance; }
+  .lede { margin: 0 0 20px; color: var(--ink-soft); font-size: 15px; }
+
+  .sort-row { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; font-size: 13px; color: var(--ink-soft); }
+  .sort-row select, .sort-row button {
+    font: inherit; font-size: 13px; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px;
+  }
+  .sort-row button { cursor: pointer; }
+
+  .cards { display: grid; gap: 16px; }
+  @media (min-width: 560px) { .cards { grid-template-columns: 1fr 1fr; } }
+  .trip-card {
+    display: block; text-align: left; width: 100%;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; cursor: pointer; padding: 0; font: inherit; color: inherit;
+    box-shadow: var(--shadow); transition: transform .15s ease;
+  }
+  .trip-card:active { transform: scale(.985); }
+  .trip-card:focus-visible, .tab:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 2px solid var(--forest); outline-offset: 2px;
+  }
+  .cover { position: relative; height: 150px; }
+  .cover svg { display: block; width: 100%; height: 100%; }
+  .badge {
+    position: absolute; left: 12px; top: 12px;
+    font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .badge.easy { background: var(--emerald-tint); color: var(--emerald); }
+  .badge.moderate { background: var(--amber-tint); color: var(--amber); }
+  .badge.difficult { background: var(--rose-tint); color: var(--rose); }
+  .trip-card .body { padding: 14px 16px 16px; }
+  .trip-card h2 { margin: 0; font-size: 17px; }
+  .meta { margin: 4px 0 0; font-size: 13px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+  .desc { margin: 8px 0 0; font-size: 13.5px; color: var(--ink-soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .price { margin: 10px 0 0; font-size: 14px; font-weight: 700; color: var(--forest); font-variant-numeric: tabular-nums; }
+
+  /* ---------- detail ---------- */
+  .back {
+    display: inline-flex; align-items: center; gap: 6px; margin: 20px 0 0;
+    border: 0; background: transparent; color: var(--forest); font: inherit; font-size: 14px; font-weight: 600;
+    padding: 4px 0; cursor: pointer;
+  }
+  .detail-head { margin: 12px 0 18px; }
+  .detail-head .row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .detail-head h1 { margin: 0; }
+  .detail-head .badge { position: static; }
+
+  .map-card {
+    background: var(--map-sky); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden; box-shadow: var(--shadow);
+  }
+  .map-card svg { display: block; width: 100%; height: auto; }
+  .map-caption { padding: 8px 14px 10px; font-size: 12px; color: var(--ink-faint); border-top: 1px solid var(--line); background: var(--card); }
+  .marker { cursor: pointer; }
+  .marker circle { fill: var(--forest); stroke: var(--card); stroke-width: 2; transition: fill .15s; }
+  .marker.active circle { fill: var(--amber); }
+  .marker text { fill: #fff; font-size: 9px; font-weight: 700; text-anchor: middle; pointer-events: none; }
+  :root[data-theme="dark"] .marker text { fill: #10201a; }
+  .route { fill: none; stroke: var(--forest); stroke-width: 2; stroke-dasharray: 5 6; stroke-linecap: round; opacity: .85; }
+  .contour { fill: none; stroke: var(--map-contour); stroke-width: 1; }
+  .peak { fill: var(--map-contour); }
+
+  h3.sect { font-size: 18px; margin: 26px 0 12px; }
+  .days { display: grid; gap: 12px; }
+  .day {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s;
+  }
+  .day.active { border-color: var(--forest); box-shadow: 0 0 0 1px var(--forest); }
+  .day header { display: flex; gap: 12px; align-items: baseline; }
+  .day-num {
+    flex: none; width: 30px; height: 30px; border-radius: 999px;
+    background: var(--forest); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; align-self: center;
+  }
+  :root[data-theme="dark"] .day-num { color: #10201a; }
+  .day h4 { margin: 0; font-size: 15.5px; }
+  .coords { margin: 1px 0 0; font-size: 12px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+  .day p.note { margin: 10px 0 0; font-size: 14px; color: var(--ink-soft); }
+  .site { margin: 12px 0 0; padding-left: 14px; border-left: 2px solid color-mix(in srgb, var(--forest) 35%, transparent); }
+  .site h5 { margin: 0; font-size: 13.5px; }
+  .site p { margin: 3px 0 0; font-size: 13px; color: var(--ink-soft); }
+  .thumbs { display: flex; gap: 8px; margin-top: 8px; }
+  .thumbs svg { width: 96px; height: 64px; border-radius: 8px; border: 1px solid var(--line); }
+
+  /* ---------- enquiry ---------- */
+  .enquiry {
+    margin-top: 26px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 20px; box-shadow: var(--shadow);
+  }
+  .enquiry h3 { margin: 0 0 4px; font-size: 17px; }
+  .enquiry .hint { margin: 0 0 16px; font-size: 13px; color: var(--ink-faint); }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: var(--ink-soft); margin-bottom: 5px; }
+  .field input {
+    width: 100%; font: inherit; font-size: 15px; color: var(--ink);
+    background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+  }
+  .field .err { display: none; margin: 5px 0 0; font-size: 12.5px; color: var(--rose); }
+  .field.invalid input { border-color: var(--rose); }
+  .field.invalid .err { display: block; }
+  .btn {
+    width: 100%; border: 0; border-radius: 10px; padding: 12px;
+    background: var(--forest); color: #fff; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  :root[data-theme="dark"] .btn { color: #10201a; }
+  .btn:active { background: var(--forest-deep); }
+  .success {
+    display: none; text-align: center; padding: 12px 0 4px;
+  }
+  .success .tick { font-size: 30px; }
+  .success h4 { margin: 8px 0 4px; color: var(--emerald); }
+  .success p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+
+  /* ---------- admin peek ---------- */
+  .admin-bar {
+    margin: 24px 0 0; background: var(--forest-deep); border-radius: 14px 14px 0 0;
+    padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+  }
+  :root[data-theme="dark"] .admin-bar { background: #0f2a1c; }
+  .admin-bar .t { color: #fff; font-weight: 700; font-size: 14px; }
+  .admin-bar .u { color: rgba(255,255,255,.65); font-size: 12px; }
+  .admin-panel {
+    border: 1px solid var(--line); border-top: 0; border-radius: 0 0 14px 14px;
+    background: var(--card); overflow-x: auto;
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 460px; font-size: 13px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-faint); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  .pill { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .pill.pub { background: var(--emerald-tint); color: var(--emerald); }
+  .pill.draft { background: var(--line); color: var(--ink-soft); }
+  .admin-note { margin: 14px 2px 0; font-size: 13px; color: var(--ink-soft); }
+  .admin-note ul { margin: 8px 0 0; padding-left: 20px; }
+  .admin-note li { margin: 4px 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<header class="app">
+  <div class="app-bar">
+    <a class="brand" href="#" onclick="show('listing');return false;">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19 10 6l3.2 6L15 9l6 10Z" fill="var(--forest)"/><path d="m10 6 2 3.8L10.5 12 8 10Z" fill="var(--forest-deep)" opacity=".5"/></svg>
+      TripApp
+    </a>
+    <nav class="tabs" role="tablist" aria-label="Preview sections">
+      <button class="tab" role="tab" id="tab-public" aria-selected="true" onclick="show('listing')">Public site</button>
+      <button class="tab" role="tab" id="tab-admin" aria-selected="false" onclick="show('admin')">Admin peek</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="preview-note"><strong>Interactive preview with sample data.</strong> This mirrors the app that was built and pushed to your repo. The live map uses OpenStreetMap tiles and real data once the app is deployed — this preview draws the route schematically from the same coordinates.</p>
+
+  <!-- ============ LISTING ============ -->
+  <section class="screen active" id="listing" role="tabpanel">
+    <h1>Upcoming Treks</h1>
+    <p class="lede">Hand-crafted trekking itineraries across India. Open a trek to walk its route on the map, day by day.</p>
+
+    <div class="sort-row">
+      <label for="sort">Sort by</label>
+      <select id="sort" onchange="renderCards()">
+        <option value="date">Start date</option>
+        <option value="difficulty">Difficulty</option>
+        <option value="duration">Duration</option>
+      </select>
+      <button id="orderBtn" onclick="flipOrder()" aria-label="Toggle sort direction">↑ Ascending</button>
+    </div>
+
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <!-- ============ DETAIL ============ -->
+  <section class="screen" id="detail" role="tabpanel">
+    <button class="back" onclick="show('listing')">← All treks</button>
+    <div class="detail-head">
+      <div class="row">
+        <h1>Hampta Pass Trek</h1>
+        <span class="badge moderate">Moderate</span>
+      </div>
+      <p class="meta">14 – 18 Sep 2026 · 5 days · <strong style="color:var(--forest)">From ₹12,500</strong></p>
+      <p class="lede" style="margin-top:8px">A dramatic crossover trek from the lush Kullu valley to the stark landscapes of Lahaul, over the 14,100&nbsp;ft Hampta Pass.</p>
+    </div>
+
+    <div class="map-card">
+      <svg viewBox="0 0 360 240" role="application" aria-label="Trek route map: four day markers connected by a dashed route line">
+        <!-- decorative contours -->
+        <path class="contour" d="M-10 200 Q 60 150 120 185 T 250 170 T 380 190"/>
+        <path class="contour" d="M-10 165 Q 80 120 160 150 T 300 130 T 380 150"/>
+        <path class="contour" d="M-10 120 Q 70 90 150 108 T 290 88 T 380 105"/>
+        <path class="contour" d="M-10 80 Q 90 50 180 66 T 380 55"/>
+        <path class="peak" d="M195 96 210 70 225 96Z" opacity=".8"/>
+        <path class="peak" d="M280 60 292 40 304 60Z" opacity=".6"/>
+        <path class="peak" d="M90 150 104 128 118 150Z" opacity=".6"/>
+        <!-- route: Jobra → Balu Ka Ghera → Hampta Pass → Chatru -->
+        <path class="route" id="routePath" d="M60 196 C 110 170, 130 150, 158 132 C 180 118, 196 122, 210 112 C 240 92, 268 66, 296 44"/>
+        <g class="marker" data-day="0" onclick="pickDay(0)"><circle cx="60" cy="196" r="12"/><text x="60" y="199.5">1</text></g>
+        <g class="marker" data-day="1" onclick="pickDay(1)"><circle cx="158" cy="132" r="12"/><text x="158" y="135.5">2</text></g>
+        <g class="marker" data-day="2" onclick="pickDay(2)"><circle cx="210" cy="112" r="12"/><text x="210" y="115.5">3</text></g>
+        <g class="marker" data-day="3" onclick="pickDay(3)"><circle cx="296" cy="44" r="12"/><text x="296" y="47.5">4</text></g>
+      </svg>
+      <div class="map-caption">Tap a numbered marker to jump to that day. Live app: pannable OpenStreetMap with the same markers &amp; route line.</div>
+    </div>
+
+    <h3 class="sect">Itinerary</h3>
+    <div class="days" id="days">
+      <article class="day" data-day="0" onclick="pickDay(0)">
+        <header><span class="day-num">1</span><div><h4>Jobra</h4><p class="coords">32.2593°, 77.2431°</p></div></header>
+        <p class="note">Drive from Manali to Jobra and a short acclimatization walk to Chika campsite.</p>
+        <div class="site">
+          <h5>📍 Chika Campsite</h5>
+          <p>Riverside meadow campsite surrounded by pine and birch forest.</p>
+          <div class="thumbs">
+            <svg viewBox="0 0 96 64" aria-label="Sample photo"><rect width="96" height="64" fill="#9db98f"/><path d="M0 64 30 30 52 52 70 34 96 64Z" fill="#5f7d55"/><circle cx="76" cy="14" r="7" fill="#f5efdc"/></svg>
+            <svg viewBox="0 0 96 64" aria-label="Sample photo"><rect width="96" height="64" fill="#7fa3ad"/><path d="M0 64 26 26 48 48 96 10 96 64Z" fill="#4c6b74"/></svg>
+          </div>
+        </div>
+      </article>
+      <article class="day" data-day="1" onclick="pickDay(1)">
+        <header><span class="day-num">2</span><div><h4>Balu Ka Ghera</h4><p class="coords">32.2799°, 77.2955°</p></div></header>
+        <p class="note">Gradual climb along the Rani river to the sandy flats of Balu Ka Ghera.</p>
+        <div class="site"><h5>📍 Rani River Crossing</h5><p>Ice-cold river crossing below Dhauladhar views.</p></div>
+      </article>
+      <article class="day" data-day="2" onclick="pickDay(2)">
+        <header><span class="day-num">3</span><div><h4>Hampta Pass</h4><p class="coords">32.2707°, 77.3369°</p></div></header>
+        <p class="note">Summit day — cross the Hampta Pass (4,270 m) and descend steeply to Shea Goru.</p>
+        <div class="site"><h5>📍 Hampta Pass Summit</h5><p>Panoramic views of Lahaul's barren peaks on one side and Kullu's green valley on the other.</p></div>
+      </article>
+      <article class="day" data-day="3" onclick="pickDay(3)">
+        <header><span class="day-num">4</span><div><h4>Chatru</h4><p class="coords">32.3555°, 77.3859°</p></div></header>
+        <p class="note">Descend to Chatru at the confluence of three passes; optional drive to Chandratal lake.</p>
+        <div class="site"><h5>📍 Chandratal Lake</h5><p>The crescent “Moon Lake” at 4,300 m — a high-altitude desert jewel.</p></div>
+      </article>
+    </div>
+
+    <div class="enquiry" id="enquiry">
+      <form id="enqForm" novalidate onsubmit="return submitEnquiry(event)">
+        <h3>Enquire about this trek</h3>
+        <p class="hint">Same validation as the live app — try a phone number that doesn't start with 6–9.</p>
+        <div class="field" id="f-name">
+          <label for="name">Name</label>
+          <input id="name" type="text" autocomplete="name">
+          <p class="err">Please enter your name (min 2 characters)</p>
+        </div>
+        <div class="field" id="f-phone">
+          <label for="phone">Mobile number</label>
+          <input id="phone" type="tel" inputmode="numeric" placeholder="10-digit mobile number">
+          <p class="err">Enter a valid 10-digit Indian mobile number</p>
+        </div>
+        <div class="field" id="f-email">
+          <label for="email">Email</label>
+          <input id="email" type="email" autocomplete="email">
+          <p class="err">Enter a valid email address</p>
+        </div>
+        <button class="btn" type="submit">Send enquiry</button>
+      </form>
+      <div class="success" id="enqSuccess">
+        <div class="tick">✅</div>
+        <h4>Enquiry received!</h4>
+        <p>In the live app this is saved to the database and appears instantly in the admin enquiries screen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ADMIN ============ -->
+  <section class="screen" id="admin" role="tabpanel">
+    <div class="admin-bar">
+      <span class="t">⛰️ TripApp Admin — Trips</span>
+      <span class="u">admin · session 45 min</span>
+    </div>
+    <div class="admin-panel">
+      <table>
+        <thead><tr><th>Trip</th><th>Dates</th><th>Status</th><th>Enquiries</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Hampta Pass Trek</strong></td><td>2026-09-14 → 09-18</td><td><span class="pill pub">PUBLISHED</span></td><td>7</td></tr>
+          <tr><td><strong>Valley of Flowers</strong></td><td>2026-08-01 → 08-05</td><td><span class="pill pub">PUBLISHED</span></td><td>12</td></tr>
+          <tr><td><strong>Sandakphu Ridge</strong></td><td>2026-11-02 → 11-07</td><td><span class="pill draft">DRAFT</span></td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="admin-note">
+      The full admin console (login-protected at <strong>/admin</strong> in the deployed app) includes:
+      <ul>
+        <li>Trip editor with drag-and-drop itinerary days and a click-to-pin map picker with place search</li>
+        <li>Per-site photo uploads (direct to Cloudinary), publish/unpublish, duplicate, delete</li>
+        <li>Enquiries screen filterable by trip and date range</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ---- navigation ----
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+    document.getElementById('tab-public').setAttribute('aria-selected', String(id !== 'admin'));
+    document.getElementById('tab-admin').setAttribute('aria-selected', String(id === 'admin'));
+    window.scrollTo({ top: 0 });
+  }
+
+  // ---- listing data & sort (mirrors GET /api/trips) ----
+  const trips = [
+    { id: 'hampta', name: 'Hampta Pass Trek', start: '2026-09-14', dates: '14 – 18 Sep 2026', days: 5,
+      diff: 'MODERATE', price: 12500, live: true,
+      desc: 'A dramatic crossover trek from the lush Kullu valley to the stark landscapes of Lahaul, over the 14,100 ft Hampta Pass.',
+      art: ['#9db98f', '#5f7d55', '#3c5a3a'] },
+    { id: 'vof', name: 'Valley of Flowers', start: '2026-08-01', dates: '1 – 5 Aug 2026', days: 5,
+      diff: 'EASY', price: 9800, live: false,
+      desc: 'Monsoon meadows in full bloom inside the UNESCO World Heritage national park, with a night at Hemkund Sahib.',
+      art: ['#b9c98a', '#7d9457', '#4c6b3a'] },
+    { id: 'sandakphu', name: 'Sandakphu Ridge', start: '2026-11-02', dates: '2 – 7 Nov 2026', days: 6,
+      diff: 'DIFFICULT', price: 15200, live: false,
+      desc: 'Walk the Singalila ridge to the only point on earth that sees four of the five highest peaks in a single sweep.',
+      art: ['#8fa9c9', '#5a7396', '#38506e'] },
+  ];
+  const rank = { EASY: 0, MODERATE: 1, DIFFICULT: 2 };
+  let order = 'asc';
+
+  function coverSvg(t) {
+    return `<svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="320" height="150" fill="${t.art[0]}"/>
+      <path d="M0 150 80 60 140 118 200 48 260 100 320 40 320 150Z" fill="${t.art[1]}"/>
+      <path d="M0 150 60 100 120 150Z M180 150 240 92 320 150Z" fill="${t.art[2]}"/>
+      <circle cx="278" cy="30" r="14" fill="rgba(255,252,240,.85)"/>
+    </svg>`;
+  }
+
+  function renderCards() {
+    const sort = document.getElementById('sort').value;
+    const list = [...trips].sort((a, b) => {
+      let c = 0;
+      if (sort === 'date') c = a.start.localeCompare(b.start);
+      else if (sort === 'duration') c = a.days - b.days;
+      else c = rank[a.diff] - rank[b.diff];
+      return order === 'desc' ? -c : c;
+    });
+    document.getElementById('cards').innerHTML = list.map(t => `
+      <button class="trip-card" onclick="${t.live ? "show('detail')" : "alert('Only the Hampta Pass detail screen is wired up in this preview — in the live app every published trek opens the same way.')"}">
+        <div class="cover">${coverSvg(t)}
+          <span class="badge ${t.diff.toLowerCase()}">${t.diff.charAt(0) + t.diff.slice(1).toLowerCase()}</span>
+        </div>
+        <div class="body">
+          <h2>${t.name}</h2>
+          <p class="meta">${t.dates} · ${t.days} days</p>
+          <p class="desc">${t.desc}</p>
+          <p class="price">From ₹${t.price.toLocaleString('en-IN')}</p>
+        </div>
+      </button>`).join('');
+  }
+  function flipOrder() {
+    order = order === 'asc' ? 'desc' : 'asc';
+    document.getElementById('orderBtn').textContent = order === 'asc' ? '↑ Ascending' : '↓ Descending';
+    renderCards();
+  }
+  renderCards();
+
+  // ---- detail: marker <-> day sync (mirrors TripMap behaviour) ----
+  function pickDay(i) {
+    document.querySelectorAll('.marker').forEach(m =>
+      m.classList.toggle('active', Number(m.dataset.day) === i));
+    document.querySelectorAll('.day').forEach(d => {
+      const on = Number(d.dataset.day) === i;
+      d.classList.toggle('active', on);
+      if (on) d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
+  pickDay(0);
+
+  // ---- enquiry validation (same rules as the live API) ----
+  const PHONE = /^[6-9]\d{9}$/, EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  function submitEnquiry(e) {
+    e.preventDefault();
+    const checks = [
+      ['f-name',  document.getElementById('name').value.trim().length >= 2],
+      ['f-phone', PHONE.test(document.getElementById('phone').value.trim())],
+      ['f-email', EMAIL.test(document.getElementById('email').value.trim())],
+    ];
+    let ok = true;
+    for (const [id, pass] of checks) {
+      document.getElementById(id).classList.toggle('invalid', !pass);
+      if (!pass) ok = false;
+    }
+    if (ok) {
+      document.getElementById('enqForm').style.display = 'none';
+      document.getElementById('enqSuccess').style.display = 'block';
+    }
+    return false;
+  }
+</script>
